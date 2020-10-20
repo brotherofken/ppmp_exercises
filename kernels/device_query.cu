@@ -1,32 +1,18 @@
 #include "device_query.cuh"
 
-#include <iostream>
 #include <fmt/format.h>
-
-#include <cuda.h>
-#include <cuda_runtime.h>
-
-namespace {
-
-template <typename Arg, typename... Args>
-void print(std::ostream& out, Arg&& arg, Args&&... args) {
-    out << std::forward<Arg>(arg);
-    using expander = int[];
-    (void)expander{0, (void(out << ',' << std::forward<Args>(args) << std::endl), 0)...};
-}
-
-}
 
 namespace kernels {
 
 __host__ void device_query() {
-    int deviceCount;
+    const int deviceCount = []{
+        int result = 0;
+        cudaGetDeviceCount(&result);
+        return result;
+    }();
 
-    cudaGetDeviceCount(&deviceCount);
-
-    for (int dev = 0; dev < deviceCount; dev++) {
-        cudaDeviceProp deviceProp;
-
+    for (int dev = 0; dev < deviceCount; ++dev) {
+        cudaDeviceProp deviceProp{};
         cudaGetDeviceProperties(&deviceProp, dev);
 
         if (dev == 0) {
