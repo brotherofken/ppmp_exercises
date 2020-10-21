@@ -10,10 +10,10 @@ int main(int argc, char ** argv) {
 
     std::vector<float> result(1000, -1);
 
-    kernels::vector_add(a.data(), b.data(), result.data(), result.size());
+    kernels::vector_add(a.data(), b.data(), result.data(), result.size() * sizeof(float));
     fmt::print("Vector addition result: [{}]\n", fmt::join(result, ", "));
 
-    kernels::vector_multiply(a.data(), b.data(), result.data(), result.size());
+    kernels::vector_multiply(a.data(), b.data(), result.data(), result.size() * sizeof(float));
     fmt::print("Vector multiplication result: [{}]\n", fmt::join(result, ", "));
 
     return 0;

@@ -80,7 +80,7 @@ void vector_add(const float* const a, const float* const b, float* dest, const i
     DeviceMem<float> db(size, b);
     DeviceMem<float> ddest(size);
 
-    vector_add_cuda<<<std::ceil(size / 256), 256>>>(da.ptr(), db.ptr(), ddest.ptr(), size);
+    vector_add_cuda<<<std::ceil(size / 256.0), 256>>>(da.ptr(), db.ptr(), ddest.ptr(), size);
 
     ddest.copy_to_host(dest, size);
 }
@@ -92,7 +92,7 @@ void vector_multiply(const float* const a, const float* const b, float* dest, co
     DeviceMem<float> db(size, b);
     DeviceMem<float> ddest(size);
 
-    vector_mul_cuda<<<std::ceil(size / 256), 256>>>(da.ptr(), db.ptr(), ddest.ptr(), size);
+    vector_mul_cuda<<<std::ceil(size / 256.0), 256>>>(da.ptr(), db.ptr(), ddest.ptr(), size);
 
     ddest.copy_to_host(dest, size);
 }
