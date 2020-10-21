@@ -1,10 +1,14 @@
-add_executable(devicequery devicequery.cpp)
+set(SRC_FILES test_vector_functions.cpp devicequery.cpp)
 
-# CUDA_SELECT_NVCC_ARCH_FLAGS(CUDA_ARCH_FLAGS Auto)
+foreach(SRC_FILE IN LISTS SRC_FILES)
+    get_filename_component(EXECUTABLE_NAME "${SRC_FILE}" NAME_WE)
+    message(STATUS "Add target ${EXECUTABLE_NAME} for ${SRC_FILE}")
+    add_executable(${EXECUTABLE_NAME} ${SRC_FILE})
 
-set_target_properties(devicequery PROPERTIES
-    CUDA_SEPARABLE_COMPILATION ON
-    CUDA_RESOLVE_DEVICE_SYMBOLS ON
-)
-add_dependencies(devicequery fmt)
-target_link_libraries(devicequery kernels fmt)
+    set_target_properties(${EXECUTABLE_NAME} PROPERTIES
+        CUDA_SEPARABLE_COMPILATION ON
+        CUDA_RESOLVE_DEVICE_SYMBOLS ON
+    )
+    add_dependencies(${EXECUTABLE_NAME} fmt)
+    target_link_libraries(${EXECUTABLE_NAME} kernels fmt)
+endforeach()
