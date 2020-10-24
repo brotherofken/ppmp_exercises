@@ -1,9 +1,15 @@
 #pragma once
 
+#include "core.cuh"
+
 namespace kernels {
 
-void matmul_simple(float const* const a, float const* const b, float* dest, int m, int n, int k);
+template<class T>
+void matmul_simple(const NDBuffer<T, 2>& a, const NDBuffer<T, 2>& b, NDBuffer<T, 2>& dest);
 
-void matmul_tiled(float const* const a, float const* const b, float* dest, int m, int n, int k);
+
+template<class T>
+void matmul_tiled(const NDBuffer<T, 2>& a, const NDBuffer<T, 2>& b, NDBuffer<T, 2>& dest);
+
 
 }

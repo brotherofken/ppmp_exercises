@@ -6,11 +6,11 @@
 namespace kernels {
 
 template<class T, int dim = 1>
-class NDSpan {
+class NDBuffer {
 public:
-    explicit NDSpan(const std::array<size_t, dim>& sizes, T* const copy_from = nullptr);
+    explicit NDBuffer(const std::array<size_t, dim>& sizes, T* const copy_from = nullptr);
 
-    ~NDSpan();
+    ~NDBuffer();
 
     void* vptr() { return reinterpret_cast<void*>(dev_ptr); }
     T* ptr() { return dev_ptr; }

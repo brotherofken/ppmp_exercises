@@ -1,4 +1,4 @@
-set(SRC_FILES test_vector_functions.cpp devicequery.cpp)
+set(SRC_FILES test_cuda_functions.cpp devicequery.cpp)
 
 foreach(SRC_FILE IN LISTS SRC_FILES)
     get_filename_component(EXECUTABLE_NAME "${SRC_FILE}" NAME_WE)

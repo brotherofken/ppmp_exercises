@@ -1,9 +1,5 @@
 #include "elementwise.cuh"
 
-#include <functional>
-
-#include <fmt/format.h>
-
 namespace {
 template<class T>
 __device__ T multiplies(const T &lhs, const T &rhs) { return lhs * rhs; }
@@ -32,18 +28,20 @@ __global__ void vector_mul_cuda(const T* const a, const T* const b, T* dest, int
 }
 
 template<class T>
-void vector_add(const NDSpan<T>& a, const NDSpan<T>& b, NDSpan<T>& dest) {
+void vector_add(const NDBuffer<T>& a, const NDBuffer<T>& b, NDBuffer<T>& dest) {
+    const size_t block_size = 256;
     const int size = a.size();
-    vector_add_cuda<<<std::ceil(size / 256.0), 256>>>(a.ptr(), b.ptr(), dest.ptr(), size);
+    vector_add_cuda<<<std::ceil(1.0 * size / block_size), block_size>>>(a.ptr(), b.ptr(), dest.ptr(), size);
 }
 
 template<class T>
-void vector_multiply(const NDSpan<T>& a, const NDSpan<T>& b, NDSpan<T>& dest) {
+void vector_multiply(const NDBuffer<T>& a, const NDBuffer<T>& b, NDBuffer<T>& dest) {
+    const size_t block_size = 256;
     const int size = a.size();
-    vector_mul_cuda<<<std::ceil(size / 256.0), 256>>>(a.ptr(), b.ptr(), dest.ptr(), size);
+    vector_mul_cuda<<<std::ceil(1.0 * size / block_size), block_size>>>(a.ptr(), b.ptr(), dest.ptr(), size);
 }
 
-template void vector_add<float>(const NDSpan<float>& a, const NDSpan<float>& b, NDSpan<float>& dest);
-template void vector_multiply<float>(const NDSpan<float>& a, const NDSpan<float>& b, NDSpan<float>& dest);
+template void vector_add<float>(const NDBuffer<float>& a, const NDBuffer<float>& b, NDBuffer<float>& dest);
+template void vector_multiply<float>(const NDBuffer<float>& a, const NDBuffer<float>& b, NDBuffer<float>& dest);
 
 }
