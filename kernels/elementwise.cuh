@@ -1,9 +1,14 @@
 #pragma once
 
+#include "core.cuh"
+
 namespace kernels {
 
-void vector_add(float const* const a, float const* const b, float* dest, int size);
+template<class T>
+void vector_add(const NDSpan<T>& a, const NDSpan<T>& b, NDSpan<T>& dest);
 
-void vector_multiply(float const* const a, float const* const b, float* dest, int size);
+
+template<class T>
+void vector_multiply(const NDSpan<T>& a, const NDSpan<T>& b, NDSpan<T>& dest);
 
 }

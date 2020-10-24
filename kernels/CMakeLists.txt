@@ -1,14 +1,16 @@
 add_library(kernels
-    device_query.cu
-    elementwise.cu
-)
+    device_query.cu device_query.cuh
+    elementwise.cu elementwise.cuh
+    matmul.cu matmul.cuh
+    core.cu core.cuh internal.cu internal.cuh)
 
 target_compile_options(kernels PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_30,code=sm_30>)
 target_compile_features(kernels PUBLIC cxx_std_11)
+
 set_target_properties(kernels PROPERTIES
-        CUDA_SEPARABLE_COMPILATION ON
-        CUDA_RESOLVE_DEVICE_SYMBOLS ON
-        )
+    CUDA_SEPARABLE_COMPILATION ON
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
+)
 
 add_dependencies(kernels fmt)
 target_link_libraries(kernels ${CUDA_LIBRARIES} fmt)
