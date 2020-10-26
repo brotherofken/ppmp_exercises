@@ -35,6 +35,10 @@ int main(int argc, char ** argv) {
         kernels::matmul_simple<float>(ca, cb, cresult);
         cresult.copy_to_host(result.data(), result.size());
         fmt::print("matmul_simple result: [{}]\n", fmt::join(result, ", "));
+
+        kernels::matmul_tiled<float>(ca, cb, cresult);
+        cresult.copy_to_host(result.data(), result.size());
+        fmt::print("matmul_tiled result: [{}]\n", fmt::join(result, ", "));
     }
     {
         std::vector<float> a{1, 2, 3, 4, 5, 6};
@@ -48,6 +52,10 @@ int main(int argc, char ** argv) {
         kernels::matmul_simple<float>(ca, cb, cresult);
         cresult.copy_to_host(result.data(), result.size());
         fmt::print("matmul_simple result: [{}]\n", fmt::join(result, ", "));
+
+        kernels::matmul_tiled<float>(ca, cb, cresult);
+        cresult.copy_to_host(result.data(), result.size());
+        fmt::print("matmul_tiled result: [{}]\n", fmt::join(result, ", "));
     }
     return 0;
 }

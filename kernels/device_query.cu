@@ -31,12 +31,8 @@ __host__ void device_query() {
         fmt::print("\tMaximum global memory msize: {}\n", deviceProp.totalGlobalMem);
         fmt::print("\tMaximum constant memory msize: {}\n", deviceProp.totalConstMem);
         fmt::print("\tMaximum shared memory msize per block: {}\n", deviceProp.sharedMemPerBlock);
-        fmt::print("\tMaximum block dimensions: {}x{}x{}\n", deviceProp.maxThreadsDim[0],
-              deviceProp.maxThreadsDim[1],
-              deviceProp.maxThreadsDim[2]);
-        fmt::print("\tMaximum grid dimensions: {}x{}x{}\n", deviceProp.maxGridSize[0],
-              deviceProp.maxGridSize[1],
-              deviceProp.maxGridSize[2]);
+        fmt::print("\tMaximum block dimensions: [{}]\n", fmt::join(deviceProp.maxThreadsDim, " x "));
+        fmt::print("\tMaximum grid dimensions: [{}]\n", fmt::join(deviceProp.maxGridSize, " x "));
         fmt::print("\tWarp msize: {}\n", deviceProp.warpSize);
     }
 }

@@ -5,11 +5,11 @@
 namespace kernels {
 
 template<class T>
-void matmul_simple(const NDBuffer<T, 2>& a, const NDBuffer<T, 2>& b, NDBuffer<T, 2>& dest);
+void matmul_simple(const Buffer2D<T>& a, const Buffer2D<T>& b, Buffer2D<T>& dest);
 
 
 template<class T>
-void matmul_tiled(const NDBuffer<T, 2>& a, const NDBuffer<T, 2>& b, NDBuffer<T, 2>& dest);
+void matmul_tiled(const Buffer2D<T>& a, const Buffer2D<T>& b, Buffer2D<T>& dest);
 
 
 }

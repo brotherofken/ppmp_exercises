@@ -28,4 +28,10 @@ private:
     T* dev_ptr;
 };
 
+template <class T>
+using Buffer1D = NDBuffer<T, 1>;
+
+template <class T>
+using Buffer2D = NDBuffer<T, 2>;
+
 }
