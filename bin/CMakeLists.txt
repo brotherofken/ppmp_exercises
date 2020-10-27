@@ -1,4 +1,4 @@
-set(SRC_FILES test_cuda_functions.cpp devicequery.cpp)
+set(SRC_FILES test_cuda_functions.cpp devicequery.cpp benchmark_matmul.cpp)
 
 foreach(SRC_FILE IN LISTS SRC_FILES)
     get_filename_component(EXECUTABLE_NAME "${SRC_FILE}" NAME_WE)
@@ -9,6 +9,6 @@ foreach(SRC_FILE IN LISTS SRC_FILES)
         CUDA_SEPARABLE_COMPILATION ON
         CUDA_RESOLVE_DEVICE_SYMBOLS ON
     )
-    add_dependencies(${EXECUTABLE_NAME} fmt)
-    target_link_libraries(${EXECUTABLE_NAME} kernels fmt)
+    add_dependencies(${EXECUTABLE_NAME} fmt ex_benchmark)
+    target_link_libraries(${EXECUTABLE_NAME} kernels fmt benchmark)
 endforeach()

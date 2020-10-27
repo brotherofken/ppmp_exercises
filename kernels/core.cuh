@@ -20,6 +20,7 @@ public:
     size_t size() const { return m_size; }
 
     void copy_to_host(T* host_ptr, int size);
+    void copy_to_device(T* host_ptr, int size);
 private:
     T* allocate(T* const copy_from);
 

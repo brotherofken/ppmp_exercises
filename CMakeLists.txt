@@ -6,6 +6,7 @@ enable_language(CUDA)
 include(CTest)
 include(ExternalProject)
 include(FeatureSummary)
+include(cmake_modules/google_benchmark.cmake)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake_modules")
 

@@ -17,7 +17,7 @@ T* NDBuffer<T, dim>::allocate(T* const copy_from) {
     const auto buffer_size = m_size * sizeof(T);
     CHECK_CUDA_CODE(cudaMalloc(&dev_ptr, buffer_size));
     if (copy_from) {
-        CHECK_CUDA_CODE(cudaMemcpy(dev_ptr, copy_from, buffer_size, cudaMemcpyHostToDevice));
+        copy_to_device(copy_from, m_size);
     }
     return dev_ptr;
 }
@@ -25,6 +25,11 @@ T* NDBuffer<T, dim>::allocate(T* const copy_from) {
 template<class T, int dim>
 void NDBuffer<T, dim>::copy_to_host(T* host_ptr, int size) {
     CHECK_CUDA_CODE(cudaMemcpy((void*)host_ptr, this->vptr(), size * sizeof(T), cudaMemcpyDeviceToHost));
+}
+
+template<class T, int dim>
+void NDBuffer<T, dim>::copy_to_device(T* host_ptr, int size) {
+    CHECK_CUDA_CODE(cudaMemcpy(dev_ptr, host_ptr, size, cudaMemcpyHostToDevice));
 }
 
 template<class T, int dim>
