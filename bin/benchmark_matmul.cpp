@@ -1,17 +1,17 @@
 #include <benchmark/benchmark.h>
 
+#include <kernels/core.cuh>
 #include <kernels/matmul.cuh>
 
 #include <functional>
 #include <random>
 
 
-class MatmulData : public ::benchmark::Fixture {
-public:
-    MatmulData()
-        : k(2048)
-        , m(2048)
-        , n(2048)
+struct MatmulData {
+    explicit MatmulData(size_t size)
+        : k(size)
+        , m(size)
+        , n(size)
         , a(m * n, -1.f)
         , b(n * k, -1.f)
         , result(m * k, -1.f)
@@ -29,15 +29,10 @@ public:
 
         generate(begin(a), end(a), gen);
         generate(begin(b), end(b), gen);
+
         ca.copy_to_device(a.data(), a.size());
         cb.copy_to_device(b.data(), b.size());
     }
-
-    void SetUp(const ::benchmark::State& state) { }
-
-    void TearDown(const ::benchmark::State& state) { }
-
-    ~MatmulData() { }
 
     const size_t m;
     const size_t n;
@@ -51,18 +46,28 @@ public:
 };
 
 
-BENCHMARK_F(MatmulData, MatmulSimple)(benchmark::State& state) {
+static void MatmulSimple(benchmark::State& state) {
+    MatmulData data(state.range(0));
     for (auto _ : state) {
-        kernels::matmul_simple<float>(ca, cb, cresult);
-        cresult.copy_to_host(result.data(), result.size());
-    }
-}
+        auto watch = std::make_shared<kernels::CudaStopwatch>();
+        kernels::matmul_simple<float>(data.ca, data.cb, data.cresult, watch);
+        state.SetIterationTime(watch->elapsedS());
 
-BENCHMARK_F(MatmulData, MatmulTiled)(benchmark::State& state) {
-    for (auto _ : state) {
-        kernels::matmul_tiled<float>(ca, cb, cresult);
-        cresult.copy_to_host(result.data(), result.size());
+        data.cresult.copy_to_host(data.result.data(), data.result.size());
     }
 }
+BENCHMARK(MatmulSimple)->UseManualTime()->Unit(benchmark::kMillisecond)->RangeMultiplier(2)->Range(256, 4096);
+
+static void MatmulTiled(benchmark::State& state) {
+    MatmulData data(state.range(0));
+    for (auto _ : state) {
+        auto watch = std::make_shared<kernels::CudaStopwatch>();
+        kernels::matmul_tiled<float>(data.ca, data.cb, data.cresult, watch);
+        state.SetIterationTime(watch->elapsedS());
+
+        data.cresult.copy_to_host(data.result.data(), data.result.size());
+    }
+}
+BENCHMARK(MatmulTiled)->UseManualTime()->Unit(benchmark::kMillisecond)->RangeMultiplier(2)->Range(256, 4096);
 
 BENCHMARK_MAIN();

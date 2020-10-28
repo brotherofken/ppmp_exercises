@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <memory>
 
 namespace kernels {
 
@@ -34,5 +35,36 @@ using Buffer1D = NDBuffer<T, 1>;
 
 template <class T>
 using Buffer2D = NDBuffer<T, 2>;
+
+struct CudaStopwatchData;
+class CudaStopwatch {
+public:
+    using SPtr = std::shared_ptr<CudaStopwatch>;
+
+    CudaStopwatch();
+
+    void start();
+
+    void stop();
+
+    float elapsedMs();
+    float elapsedS();
+private:
+    std::shared_ptr<CudaStopwatchData> data;
+};
+
+struct StopwatchContext {
+    StopwatchContext(CudaStopwatch::SPtr watch)
+        : watch(watch)
+    {
+        if (watch) { watch->start(); }
+    }
+
+    ~StopwatchContext() {
+        if (watch) { watch->stop(); }
+    }
+
+    CudaStopwatch::SPtr watch;
+};
 
 }

@@ -29,7 +29,7 @@ void NDBuffer<T, dim>::copy_to_host(T* host_ptr, int size) {
 
 template<class T, int dim>
 void NDBuffer<T, dim>::copy_to_device(T* host_ptr, int size) {
-    CHECK_CUDA_CODE(cudaMemcpy(dev_ptr, host_ptr, size, cudaMemcpyHostToDevice));
+    CHECK_CUDA_CODE(cudaMemcpy(this->vptr(), (void*)host_ptr, size * sizeof(T), cudaMemcpyHostToDevice));
 }
 
 template<class T, int dim>
@@ -37,8 +37,38 @@ NDBuffer<T, dim>::~NDBuffer() {
     CHECK_CUDA_CODE(cudaFree(dev_ptr));
 }
 
+struct CudaStopwatchData {
+    cudaEvent_t event_start;
+    cudaEvent_t event_stop;
+};
+
+CudaStopwatch::CudaStopwatch()
+    : data(std::make_shared<CudaStopwatchData>())
+{
+    cudaEventCreate(&data->event_start);
+    cudaEventCreate(&data->event_stop);
+}
+
+void CudaStopwatch::start() {
+    cudaEventRecord(data->event_start);
+}
+
+void CudaStopwatch::stop() {
+    cudaEventRecord(data->event_stop);
+}
+
+float CudaStopwatch::elapsedMs() {
+    float milliseconds = 0;
+    cudaEventSynchronize(data->event_stop);
+    cudaEventElapsedTime(&milliseconds, data->event_start, data->event_stop);
+    return milliseconds;
+}
+
+float CudaStopwatch::elapsedS() {
+    return elapsedMs() / 1000.f;
+}
+
 template class NDBuffer<float, 1>;
 template class NDBuffer<float, 2>;
 
 }
-

@@ -1,5 +1,7 @@
 #include "matmul.cuh"
 
+#include "core.cuh"
+
 #include <fmt/format.h>
 
 namespace kernels {
@@ -25,14 +27,18 @@ __global__ void matmul_simple_cuda(const T* const a, const T* const b, T* dest, 
 
 
 template<class T>
-void matmul_simple(const Buffer2D<T>& a, const Buffer2D<T>& b, Buffer2D<T>& dest) {
+void matmul_simple(const Buffer2D<T>& a, const Buffer2D<T>& b, Buffer2D<T>& dest, CudaStopwatch::SPtr watch) {
     const size_t tile_size = 16;
     const size_t m = a.sizes()[0];
     const size_t n = a.sizes()[1];
     const size_t k = b.sizes()[1];
     const dim3 dim_grid(std::ceil(1.0 * m / tile_size), std::ceil(1.0 * m / tile_size));
     const dim3 dim_block(tile_size, tile_size);
-    matmul_simple_cuda<<<dim_grid, dim_block>>>(a.ptr(), b.ptr(), dest.ptr(), m, n, k);
+
+    {
+        StopwatchContext context(watch);
+        matmul_simple_cuda<<<dim_grid, dim_block>>>(a.ptr(), b.ptr(), dest.ptr(), m, n, k);
+    }
 }
 
 
@@ -70,20 +76,24 @@ __global__ void matmul_tiled_cuda(const T* const a, const T* const b, T* dest, s
 
 
 template<class T>
-void matmul_tiled(const Buffer2D<T>& a, const Buffer2D<T>& b, Buffer2D<T>& dest) {
+void matmul_tiled(const Buffer2D<T>& a, const Buffer2D<T>& b, Buffer2D<T>& dest, CudaStopwatch::SPtr watch) {
     const size_t tile_size = 16;
     const size_t m = a.sizes()[0];
     const size_t n = a.sizes()[1];
     const size_t k = b.sizes()[1];
     const dim3 dim_grid(std::ceil(1.0 * m / tile_size), std::ceil(1.0 * m / tile_size));
     const dim3 dim_block(tile_size, tile_size);
-    matmul_tiled_cuda<<<dim_grid, dim_block>>>(a.ptr(), b.ptr(), dest.ptr(), m, n, k);
+
+    {
+        StopwatchContext context(watch);
+        matmul_tiled_cuda<<<dim_grid, dim_block>>>(a.ptr(), b.ptr(), dest.ptr(), m, n, k);
+    }
 }
 
-template void matmul_simple<float>(const Buffer2D<float>& a, const Buffer2D<float>& b, Buffer2D<float>& dest);
-template void matmul_simple<double>(const Buffer2D<double>& a, const Buffer2D<double>& b, Buffer2D<double>& dest);
+template void matmul_simple<float>(const Buffer2D<float>& a, const Buffer2D<float>& b, Buffer2D<float>& dest, CudaStopwatch::SPtr watch);
+template void matmul_simple<double>(const Buffer2D<double>& a, const Buffer2D<double>& b, Buffer2D<double>& dest, CudaStopwatch::SPtr watch);
 
-template void matmul_tiled<float>(const Buffer2D<float>& a, const Buffer2D<float>& b, Buffer2D<float>& dest);
-template void matmul_tiled<double>(const Buffer2D<double>& a, const Buffer2D<double>& b, Buffer2D<double>& dest);
+template void matmul_tiled<float>(const Buffer2D<float>& a, const Buffer2D<float>& b, Buffer2D<float>& dest, CudaStopwatch::SPtr watch);
+template void matmul_tiled<double>(const Buffer2D<double>& a, const Buffer2D<double>& b, Buffer2D<double>& dest, CudaStopwatch::SPtr watch);
 
 }
