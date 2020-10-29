@@ -21,16 +21,19 @@ make -j all
 I'm updating it on the way.
 - ☑ build system
 - ☑ device query
-- ☑ benchmarking
-- ☐ unit tests
+- ☑ [benchmarking](https://github.com/google/benchmark)
+- ☐ [unit tests](https://github.com/google/googletest)
 - CUDA thingies
   - ☐ unified memory
+  - ☐ streams
 - algorithms
   - ☑ vector add
   - ☑ naive matrix multiplication
   - ☑ tiled matrix multiplication
-  - ☐ 2D convolution
+  - sum reduction
+  - ☐ 1D/2D convolution (const mem, tiled)
   - ☐ histogram
+  - ☐ Estimate Pi using Monte-Carlo simulation
 
 # Benchmarks
 
